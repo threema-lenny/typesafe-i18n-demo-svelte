@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
+	import type { Readable } from 'svelte/store';
 	import { localStorageDetector } from 'typesafe-i18n/detectors'
 
 	import logo from './assets/svelte.png'
-	import LL, { locale, setLocale } from './i18n/i18n-svelte'
+	import { LL, LD, locale, setLocale } from './i18n/i18n-threema'
 	import type { Locales } from './i18n/i18n-types'
 	import { detectLocale, locales } from './i18n/i18n-util'
 	import { loadLocaleAsync } from './i18n/i18n-util.async'
@@ -27,6 +28,15 @@
 	$: $locale && localStorage.setItem('lang', $locale)
 
 	let name: string = 'typesafe-i18n'
+
+	// Custom code for us!
+	let someVariableThatWasDeterminedByFunction: Readable<string> | undefined;
+	function someFunctionThatRequiresTranslation() {
+		// All that is needed is to do this instead of the below out-commented variant.
+		//someVariableThatWasDeterminedByFunction = LL.greeting.message({name: 'Rob'});
+		someVariableThatWasDeterminedByFunction = LD('greeting.message', {name: 'Rob'});
+	}
+	someFunctionThatRequiresTranslation();
 </script>
 
 <style>
@@ -97,6 +107,7 @@
 	<img src={logo} alt="Svelte Logo" />
 
 	<h1>{$LL.greeting.message({ name })}</h1>
+	<h2>{$someVariableThatWasDeterminedByFunction}</h2>
 
 	<label>
 		{$LL.greeting.label()}
